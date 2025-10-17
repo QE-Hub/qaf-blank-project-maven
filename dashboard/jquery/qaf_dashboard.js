@@ -53,6 +53,7 @@ var overviewTemplate = '<div class="title_bg">${name}</div>'
 		+ '<div class="colum colum_one_mrgin">'
 		+ '<ul>'
 		+ '<li class="title text-center">&nbsp;</li>'
+		+ '<li class="title text-center"><a dir="export" class="link" href="javascript:void(0)" onclick="exportResultsToCSV();">Export results</a></li>'
 		+ '<li class="title text-center"><a dir="all" class="link" href="javascript:void(0)" onclick="loadListAll();">View all results</a></li>'
 		+ '<li class="result text-center">Passed</li>'
 		+ '<li class=""><div class="green_bg" style="margin:0 auto;">${pass}</div></li>'
@@ -489,6 +490,77 @@ function loadListAll() {
 
 	});
 
+}
+
+function exportResultsToCSV() {
+	// Get current execution data
+	var currentReport = $('#reportlist li.selected');
+	if (!currentReport.length) {
+		alert('No report selected for export');
+		return;
+	}
+	
+	var reportDir = $(currentReport).attr("dir");
+	var reportPath = removePrefixOfResultRootDir(reportDir);
+	
+	// Fetch the meta-info to get execution details
+	$.getJSON(reportPath + "/meta-info.json", function(data) {
+		// Create CSV content
+		var csvContent = generateCSVContent(data);
+		
+		// Create and download the file
+		downloadCSV(csvContent, 'test_execution_report.csv');
+	}).fail(function() {
+		alert('Failed to load report data for export');
+	});
+}
+
+function generateCSVContent(data) {
+	// CSV header
+	var csvContent = "Test Name,Status,Duration,Start Time,End Time,Pass Count,Fail Count,Skip Count,Total Count,Pass Rate\n";
+	
+	// Add summary row
+	var passRate = data.total > 0 ? Math.round(data.pass / data.total * 100) : 0;
+	var startTime = new Date(data.startTime).toLocaleString();
+	var endTime = new Date(data.endTime).toLocaleString();
+	var duration = getDuration(data.endTime - data.startTime);
+	
+	csvContent += "Overall Summary,," + duration + "," + startTime + "," + endTime + "," + 
+		data.pass + "," + data.fail + "," + data.skip + "," + data.total + "," + passRate + "%\n";
+	
+	// Add individual test results if available
+	if (data.tests && data.tests.length > 0) {
+		csvContent += "\nIndividual Test Results:\n";
+		csvContent += "Test Name,Status,Duration,Start Time,End Time,Pass Count,Fail Count,Skip Count,Total Count,Pass Rate\n";
+		
+		// This is a placeholder - in a real implementation, you would fetch individual test details
+		$.each(data.tests, function(i, testName) {
+			csvContent += testName + ",N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A\n";
+		});
+	}
+	
+	return csvContent;
+}
+
+function downloadCSV(csvContent, filename) {
+	// Create a blob with the CSV content
+	var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+	
+	// Create a link element and trigger download
+	var link = document.createElement("a");
+	if (link.download !== undefined) {
+		var url = URL.createObjectURL(blob);
+		link.setAttribute("href", url);
+		link.setAttribute("download", filename);
+		link.style.visibility = 'hidden';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+	} else {
+		// Fallback for older browsers
+		alert('CSV export not supported in this browser. Content:\n\n' + csvContent);
+	}
 }
 function loaResult(dir) {
 	tmp = curResultDir + "/" + dir;
