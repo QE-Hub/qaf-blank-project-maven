@@ -91,9 +91,13 @@ Contains test methods for various navigation scenarios:
 - Maintains existing QAF framework configuration
 
 ### Locators
-- Comprehensive locators file with data-testid attributes
-- Alternative locators for different page structures
-- Covers all major elements on homepage and PDP
+**Important Note**: The initial locators used `data-testid` attributes which are **imaginary/placeholder** values. The actual Ralph Lauren website may not have these specific attributes.
+
+The framework now includes:
+- **ElementFinder utility class** with multiple locator strategies
+- **Realistic CSS selectors** based on common e-commerce patterns  
+- **Fallback mechanisms** to handle different website structures
+- **Dynamic element discovery** that tries multiple selectors
 
 ## Usage
 
@@ -128,10 +132,24 @@ mvn test -Dcucumber.options="--tags @Smoke"
 - WebDriverManager (latest version)
 - TestNG for test execution
 
-## Notes
+## Important Notes
 
-- The implementation uses data-testid attributes for reliable element identification
-- Cookie consent handling is included for GDPR compliance
-- Page loading waits are implemented for better test stability
-- The framework supports both programmatic and BDD test execution
-- All step definitions are properly annotated with @QAFTestStep for QAF integration
+### Locator Reality Check
+- **Initial `data-testid` attributes were imaginary** - they don't exist on the real Ralph Lauren website
+- The framework now uses **ElementFinder utility** with multiple fallback strategies
+- **Real-world testing required** to identify actual element selectors
+- Use `RalphLaurenBasicTest` to discover what elements are actually available
+
+### Framework Features
+- **Dynamic element discovery** using multiple locator strategies
+- **Fallback mechanisms** for different website structures
+- Cookie consent handling for GDPR compliance
+- Page loading waits for better test stability
+- Support for both programmatic and BDD test execution
+- All step definitions properly annotated with @QAFTestStep for QAF integration
+
+### Next Steps for Real Implementation
+1. Run `RalphLaurenBasicTest` to see what elements are actually available
+2. Update locators based on real website structure
+3. Adjust ElementFinder strategies based on findings
+4. Test with actual Ralph Lauren website elements

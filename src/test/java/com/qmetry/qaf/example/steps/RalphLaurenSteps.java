@@ -23,6 +23,12 @@ public class RalphLaurenSteps {
     public void openRalphLaurenHomepage() {
         homePage = new RalphLaurenHomePage();
         homePage.openHomePage();
+        // Wait a bit for page to load
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         homePage.handleCookieConsent();
     }
 

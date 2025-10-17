@@ -13,16 +13,16 @@ public abstract class BasePage {
     protected QAFWebDriver driver;
 
     // Common elements that might appear on any page
-    @FindBy(locator = "css=header[data-testid='main-header']")
+    @FindBy(locator = "main.header")
     protected QAFWebElement mainHeader;
 
-    @FindBy(locator = "css=footer[data-testid='main-footer']")
+    @FindBy(locator = "main.footer")
     protected QAFWebElement mainFooter;
 
-    @FindBy(locator = "css=button[data-testid='cookie-accept']")
+    @FindBy(locator = "cookie.accept")
     protected QAFWebElement cookieAcceptButton;
 
-    @FindBy(locator = "css=button[data-testid='cookie-reject']")
+    @FindBy(locator = "cookie.reject")
     protected QAFWebElement cookieRejectButton;
 
     // Constructor

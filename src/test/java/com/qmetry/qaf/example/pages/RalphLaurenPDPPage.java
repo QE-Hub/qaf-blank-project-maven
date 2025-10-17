@@ -2,6 +2,7 @@ package com.qmetry.qaf.example.pages;
 
 import com.qmetry.qaf.automation.ui.annotations.FindBy;
 import com.qmetry.qaf.automation.ui.webdriver.QAFWebElement;
+import com.qmetry.qaf.example.utils.ElementFinder;
 
 /**
  * Page Object Model for Ralph Lauren Product Detail Page (PDP)
@@ -9,63 +10,63 @@ import com.qmetry.qaf.automation.ui.webdriver.QAFWebElement;
  */
 public class RalphLaurenPDPPage extends BasePage {
 
-    // Product information elements
-    @FindBy(locator = "css=h1[data-testid='product-title']")
+    // Product information elements - using realistic locators
+    @FindBy(locator = "product.title")
     private QAFWebElement productTitle;
 
-    @FindBy(locator = "css=span[data-testid='product-price']")
+    @FindBy(locator = "product.price")
     private QAFWebElement productPrice;
 
-    @FindBy(locator = "css=div[data-testid='product-description']")
+    @FindBy(locator = "product.description")
     private QAFWebElement productDescription;
 
-    @FindBy(locator = "css=div[data-testid='product-images']")
+    @FindBy(locator = "product.images")
     private QAFWebElement productImages;
 
     // Size selection elements
-    @FindBy(locator = "css=div[data-testid='size-selector']")
+    @FindBy(locator = "size.selector")
     private QAFWebElement sizeSelector;
 
-    @FindBy(locator = "css=button[data-testid='size-option']")
+    @FindBy(locator = "size.option")
     private QAFWebElement sizeOptions;
 
     // Color selection elements
-    @FindBy(locator = "css=div[data-testid='color-selector']")
+    @FindBy(locator = "color.selector")
     private QAFWebElement colorSelector;
 
-    @FindBy(locator = "css=button[data-testid='color-option']")
+    @FindBy(locator = "color.option")
     private QAFWebElement colorOptions;
 
     // Add to cart elements
-    @FindBy(locator = "css=button[data-testid='add-to-cart']")
+    @FindBy(locator = "add.to.cart")
     private QAFWebElement addToCartButton;
 
-    @FindBy(locator = "css=button[data-testid='add-to-wishlist']")
+    @FindBy(locator = "add.to.wishlist")
     private QAFWebElement addToWishlistButton;
 
     // Quantity selector
-    @FindBy(locator = "css=select[data-testid='quantity-selector']")
+    @FindBy(locator = "quantity.selector")
     private QAFWebElement quantitySelector;
 
-    @FindBy(locator = "css=input[data-testid='quantity-input']")
+    @FindBy(locator = "quantity.input")
     private QAFWebElement quantityInput;
 
     // Product details elements
-    @FindBy(locator = "css=div[data-testid='product-details']")
+    @FindBy(locator = "product.details")
     private QAFWebElement productDetails;
 
-    @FindBy(locator = "css=div[data-testid='size-chart']")
+    @FindBy(locator = "size.chart")
     private QAFWebElement sizeChart;
 
-    @FindBy(locator = "css=div[data-testid='shipping-info']")
+    @FindBy(locator = "shipping.info")
     private QAFWebElement shippingInfo;
 
     // Breadcrumb navigation
-    @FindBy(locator = "css=nav[data-testid='breadcrumb']")
+    @FindBy(locator = "breadcrumb")
     private QAFWebElement breadcrumb;
 
     // Related products
-    @FindBy(locator = "css=div[data-testid='related-products']")
+    @FindBy(locator = "related.products")
     private QAFWebElement relatedProducts;
 
     // Constructor
@@ -78,7 +79,13 @@ public class RalphLaurenPDPPage extends BasePage {
      * @return String product title
      */
     public String getProductTitle() {
-        return productTitle.getText();
+        QAFWebElement titleElement = ElementFinder.findProductTitle();
+        if (titleElement != null) {
+            return titleElement.getText();
+        } else if (productTitle.isPresent()) {
+            return productTitle.getText();
+        }
+        return "";
     }
 
     /**
@@ -86,7 +93,13 @@ public class RalphLaurenPDPPage extends BasePage {
      * @return String product price
      */
     public String getProductPrice() {
-        return productPrice.getText();
+        QAFWebElement priceElement = ElementFinder.findProductPrice();
+        if (priceElement != null) {
+            return priceElement.getText();
+        } else if (productPrice.isPresent()) {
+            return productPrice.getText();
+        }
+        return "";
     }
 
     /**
@@ -144,8 +157,16 @@ public class RalphLaurenPDPPage extends BasePage {
      * Add the product to cart
      */
     public void addToCart() {
-        addToCartButton.click();
-        waitForPageToLoad();
+        QAFWebElement cartButton = ElementFinder.findAddToCartButton();
+        if (cartButton != null) {
+            cartButton.click();
+            waitForPageToLoad();
+        } else if (addToCartButton.isPresent()) {
+            addToCartButton.click();
+            waitForPageToLoad();
+        } else {
+            throw new RuntimeException("Add to cart button not found");
+        }
     }
 
     /**
@@ -161,8 +182,15 @@ public class RalphLaurenPDPPage extends BasePage {
      * @return boolean
      */
     public boolean isPDPLoaded() {
-        return productTitle.isPresent() && productTitle.isDisplayed() && 
-               productPrice.isPresent() && productPrice.isDisplayed();
+        QAFWebElement titleElement = ElementFinder.findProductTitle();
+        QAFWebElement priceElement = ElementFinder.findProductPrice();
+        
+        boolean titlePresent = (titleElement != null && titleElement.isPresent()) || 
+                              (productTitle.isPresent() && productTitle.isDisplayed());
+        boolean pricePresent = (priceElement != null && priceElement.isPresent()) || 
+                              (productPrice.isPresent() && productPrice.isDisplayed());
+        
+        return titlePresent && pricePresent;
     }
 
     /**
