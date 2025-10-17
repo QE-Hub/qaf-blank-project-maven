@@ -15,6 +15,16 @@ public class StepsLibrary {
 	}
 
 	/**
+	 * @param pageUrl
+	 *            : URL of the page to open
+	 */
+	@QAFTestStep(description = "open page {0}")
+	public static void openPage(String pageUrl) {
+		get(pageUrl);
+		rejectAllCookies();
+	}
+
+	/**
 	 * @param searchTerm
 	 *            : search term to be searched
 	 */
